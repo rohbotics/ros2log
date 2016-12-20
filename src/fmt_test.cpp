@@ -24,7 +24,7 @@ void log_error(const char *f, const Args &... args){
 int main(int argc, char **argv) {
 	ros::init(argc, argv, "fmt_test");
 
-	int foo = 42;
+	const int foo = 42;
 	log_warn("The meaning of life {}", foo);
 	log_warn("This time in hex: {:x}", foo);
 	log_warn("Binary: {:b}", foo);
