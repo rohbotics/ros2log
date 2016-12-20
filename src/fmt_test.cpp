@@ -4,6 +4,8 @@
 #include <string>
 #include <utility>
 
+
+// log_warn uses rvalue refrences and perfect forwarding
 template <typename... Args>
 void log_warn(const char *f, Args &&... args){
 	fmt::MemoryWriter w;
@@ -11,6 +13,8 @@ void log_warn(const char *f, Args &&... args){
 	ROS_WARN("%s", w.c_str());
 }
 
+// log_error uses const lvalue refs
+// It also uses std::string just to demo
 template <typename... Args>
 void log_error(const char *f, const Args &... args){
 	std::string s = fmt::format(f, args...);
