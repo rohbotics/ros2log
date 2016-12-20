@@ -11,6 +11,12 @@ void log_warn(const char *f, Args &&... args){
 	ROS_WARN("%s", w.c_str());
 }
 
+template <typename... Args>
+void log_error(const char *f, const Args &&... args){
+	std::string s = fmt::format(f, std::forward<Args>(args)...);
+	ROS_WARN("%s", s.c_str());
+}
+
 int main(int argc, char **argv) {
 	ros::init(argc, argv, "fmt_test");
 
