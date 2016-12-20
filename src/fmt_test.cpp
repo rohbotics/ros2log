@@ -12,9 +12,9 @@ void log_warn(const char *f, Args &&... args){
 }
 
 template <typename... Args>
-void log_error(const char *f, const Args &&... args){
-	std::string s = fmt::format(f, std::forward<Args>(args)...);
-	ROS_WARN("%s", s.c_str());
+void log_error(const char *f, const Args &... args){
+	std::string s = fmt::format(f, args...);
+	ROS_ERROR("%s", s.c_str());
 }
 
 int main(int argc, char **argv) {
@@ -26,8 +26,8 @@ int main(int argc, char **argv) {
 	log_warn("Binary: {:b}", foo);
 
 	double bar = 3.14159265;
-	log_warn("Pi {}", bar);
+	log_error("Pi {}", bar);
 
 	std::string hi = "hola";
-	log_warn("{}", hi);
+	log_error("{}", hi);
 }
