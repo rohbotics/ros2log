@@ -11,26 +11,20 @@ int main(int argc, char **argv) {
 	rclcpp::init(argc, argv);
 
 	auto node = rclcpp::node::Node::make_shared("roslog_fmt_test");
+	auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
+
 	Logger log(node);
 
-
-	const int foo = 42;
-	log.warn("The meaning of life {}", foo);
-	log.warn("How about in hex: {:x}", foo);
-	log.warn("Binary: {:b}", foo);
-
-	double bar = 3.14159265;
-	log.error("Pi {}", bar);
-
-	std::string hi = "hola";
-	log.error("{}", hi);
 
 	rclcpp::WallRate loop_rate(1);
 
 	int i = 0;
 	while (rclcpp::ok()) {
-		log.error("Hi! {}", i);
-		log.warn("Hola! {}", i);
+		log.debug("Friendly debug {}", i);
+		log.info("FYI {}", i);
+		log.warn("Foo warning! {}", i);
+		log.error("Bar error! {}", i);
+		log.fatal("-----------------");
 		i++;
 
 		rclcpp::spin_some(node);
