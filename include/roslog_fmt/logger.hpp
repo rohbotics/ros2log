@@ -70,46 +70,47 @@ public:
 
 	template <typename... Args>
 	void debug(const char *f, Args &&... args) {
-		if (level <= Log_Levels::DEBUG){
+		if (level <= Log_Levels::DEBUG) {
 			fmt::MemoryWriter w;
 			w.write(f, std::forward<Args>(args)...);
-			printf("%s\n", w.c_str());
+			auto string = fmt::format("DEBUG: {}", w.c_str());
+			output(w.c_str());
 		}
 	}
 
 	template <typename... Args>
 	void info(const char *f, Args &&... args) {
-		if (level <= Log_Levels::INFO){
+		if (level <= Log_Levels::INFO) {
 			fmt::MemoryWriter w;
 			w.write(f, std::forward<Args>(args)...);
-			printf("%s\n", w.c_str());
+			output(w.c_str());
 		}
 	}
 
 	template <typename... Args>
 	void warn(const char *f, Args &&... args) {
-		if (level <= Log_Levels::WARN){
+		if (level <= Log_Levels::WARN) {
 			fmt::MemoryWriter w;
 			w.write(f, std::forward<Args>(args)...);
-			printf("%s\n", w.c_str());
+			output(w.c_str());
 		}
 	}
 
 	template <typename... Args>
 	void error(const char *f, Args &&... args) {
-		if (level <= Log_Levels::ERROR){
+		if (level <= Log_Levels::ERROR) {
 			fmt::MemoryWriter w;
 			w.write(f, std::forward<Args>(args)...);
-			printf("%s\n", w.c_str());
+			output(w.c_str());
 		}
 	}
 
 	template <typename... Args>
 	void fatal(const char *f, Args &&... args) {
-		if (level <= Log_Levels::FATAL){
+		if (level <= Log_Levels::FATAL) {
 			fmt::MemoryWriter w;
 			w.write(f, std::forward<Args>(args)...);
-			printf("%s\n", w.c_str());
+			output(w.c_str());
 		}
 	}
 
@@ -119,4 +120,7 @@ private:
 
 	Log_Levels level;
 
+	void output(const char *log_string) {
+		printf("%s\n", log_string);
+	}
 };
