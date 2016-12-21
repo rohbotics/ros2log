@@ -15,6 +15,14 @@ enum class Log_Levels
 	NONE
 };
 
+enum class Log_Color
+{
+	RED,
+	YELLOW,
+	GREEN,
+	DEFAULT
+};
+
 class Logger
 {
 public:
@@ -77,31 +85,31 @@ public:
 
 	void debug(const std::string& log_string) const {
 		if (level <= Log_Levels::DEBUG) {
-			output(log_string);
+			output(log_string, Log_Color::GREEN);
 		}
 	}
 
 	void info(const std::string& log_string) const {
 		if (level <= Log_Levels::INFO) {
-			output(log_string);
+			output(log_string, Log_Color::DEFAULT);
 		}
 	}
 
 	void warn(const std::string& log_string) const {
 		if (level <= Log_Levels::WARN) {
-			output(log_string);
+			output(log_string, Log_Color::YELLOW);
 		}
 	}
 
 	void error(const std::string& log_string) const {
 		if (level <= Log_Levels::ERROR) {
-			output(log_string);
+			output(log_string, Log_Color::RED);
 		}
 	}
 
 	void fatal(const std::string& log_string) const {
 		if (level <= Log_Levels::FATAL) {
-			output(log_string);
+			output(log_string, Log_Color::RED);
 		}
 	}
 
@@ -112,8 +120,21 @@ private:
 
 	Log_Levels level;
 
-	void output(const std::string& log_string) const {
-		printf("%s\n", log_string.c_str());
+	void output(const std::string& log_string, Log_Color color) const {
+		switch (color){
+			case Log_Color::RED:
+				printf("\x1b[31m%s\x1b[0m\n", log_string.c_str());
+				break;
+			case Log_Color::YELLOW:
+				printf("\x1b[33m%s\x1b[0m\n", log_string.c_str());
+				break;
+			case Log_Color::GREEN:
+				printf("\x1b[32m%s\x1b[0m\n", log_string.c_str());
+				break;
+			case Log_Color::DEFAULT:
+				printf("%s\n", log_string.c_str());
+				break;
+		}
 
 		auto message = std_msgs::msg::String();
 		message.data = log_string;
