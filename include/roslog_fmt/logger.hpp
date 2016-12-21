@@ -1,5 +1,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <fmt/format.h>
+#include <std_msgs/msg/string.hpp>
 
 #include <chrono>
 
@@ -67,6 +68,7 @@ public:
 			}
 		);
 
+		rosout_pub = node->create_publisher<std_msgs::msg::String>("rosout");
 
 	};
 
@@ -106,10 +108,15 @@ public:
 
 private:
 	std::shared_ptr<rclcpp::node::Node> node;
+	rclcpp::Publisher<std_msgs::msg::String>::SharedPtr rosout_pub;
 
 	Log_Levels level;
 
 	void output(const std::string& log_string) const {
 		printf("%s\n", log_string.c_str());
+
+		auto message = std_msgs::msg::String();
+		message.data = log_string;
+		rosout_pub->publish(message);
 	}
 };

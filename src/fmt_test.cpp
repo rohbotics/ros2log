@@ -10,7 +10,7 @@
 int main(int argc, char **argv) {
 	rclcpp::init(argc, argv);
 
-	auto node = rclcpp::node::Node::make_shared("roslog_fmt_test");
+	auto node = rclcpp::node::Node::make_shared("fmt_test");
 	auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
 
 	FmtLogger log(node);
