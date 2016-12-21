@@ -69,7 +69,7 @@ public:
 	~Logger() = default;
 
 	template <typename... Args>
-	void debug(const char *f, Args &&... args) {
+	void debug(const char *f, Args &&... args) const {
 		if (level <= Log_Levels::DEBUG) {
 			fmt::MemoryWriter w;
 			w.write(f, std::forward<Args>(args)...);
@@ -79,7 +79,7 @@ public:
 	}
 
 	template <typename... Args>
-	void info(const char *f, Args &&... args) {
+	void info(const char *f, Args &&... args) const {
 		if (level <= Log_Levels::INFO) {
 			fmt::MemoryWriter w;
 			w.write(f, std::forward<Args>(args)...);
@@ -88,7 +88,7 @@ public:
 	}
 
 	template <typename... Args>
-	void warn(const char *f, Args &&... args) {
+	void warn(const char *f, Args &&... args) const {
 		if (level <= Log_Levels::WARN) {
 			fmt::MemoryWriter w;
 			w.write(f, std::forward<Args>(args)...);
@@ -97,7 +97,7 @@ public:
 	}
 
 	template <typename... Args>
-	void error(const char *f, Args &&... args) {
+	void error(const char *f, Args &&... args) const {
 		if (level <= Log_Levels::ERROR) {
 			fmt::MemoryWriter w;
 			w.write(f, std::forward<Args>(args)...);
@@ -106,7 +106,7 @@ public:
 	}
 
 	template <typename... Args>
-	void fatal(const char *f, Args &&... args) {
+	void fatal(const char *f, Args &&... args) const {
 		if (level <= Log_Levels::FATAL) {
 			fmt::MemoryWriter w;
 			w.write(f, std::forward<Args>(args)...);
