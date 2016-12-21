@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 
-#include <roslog_fmt/logger.hpp>
+#include <roslog_fmt/fmt_logger.hpp>
 
 int main(int argc, char **argv) {
 	rclcpp::init(argc, argv);
@@ -13,8 +13,7 @@ int main(int argc, char **argv) {
 	auto node = rclcpp::node::Node::make_shared("roslog_fmt_test");
 	auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
 
-	Logger log(node);
-
+	FmtLogger log(node);
 
 	rclcpp::WallRate loop_rate(1);
 
