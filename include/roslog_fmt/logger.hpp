@@ -1,6 +1,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <fmt/format.h>
 
+#include <chrono>
+
 
 enum class Log_Levels
 {
@@ -64,6 +66,8 @@ public:
 				return result;
 			}
 		);
+
+
 	};
 
 	~Logger() = default;
@@ -71,46 +75,70 @@ public:
 	template <typename... Args>
 	void debug(const char *f, Args &&... args) const {
 		if (level <= Log_Levels::DEBUG) {
-			fmt::MemoryWriter w;
-			w.write(f, std::forward<Args>(args)...);
-			auto string = fmt::format("DEBUG: {}", w.c_str());
-			output(w.c_str());
+			auto now = std::chrono::system_clock::now().time_since_epoch();
+			auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now);
+			now -= seconds;
+			auto nano_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now); 
+
+			auto before_metadata = fmt::format(f, std::forward<Args>(args)...);
+			auto after_metadata = fmt::format("DEBUG: [{}.{}] {}", seconds.count(), nano_seconds.count(), before_metadata);
+			output(after_metadata);
 		}
 	}
 
 	template <typename... Args>
 	void info(const char *f, Args &&... args) const {
 		if (level <= Log_Levels::INFO) {
-			fmt::MemoryWriter w;
-			w.write(f, std::forward<Args>(args)...);
-			output(w.c_str());
+			auto now = std::chrono::system_clock::now().time_since_epoch();
+			auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now);
+			now -= seconds;
+			auto nano_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now); 
+
+			auto before_metadata = fmt::format(f, std::forward<Args>(args)...);
+			auto after_metadata = fmt::format("INFO: [{}.{}] {}", seconds.count(), nano_seconds.count(), before_metadata);
+			output(after_metadata);
 		}
 	}
 
 	template <typename... Args>
 	void warn(const char *f, Args &&... args) const {
 		if (level <= Log_Levels::WARN) {
-			fmt::MemoryWriter w;
-			w.write(f, std::forward<Args>(args)...);
-			output(w.c_str());
+			auto now = std::chrono::system_clock::now().time_since_epoch();
+			auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now);
+			now -= seconds;
+			auto nano_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now); 
+
+			auto before_metadata = fmt::format(f, std::forward<Args>(args)...);
+			auto after_metadata = fmt::format("WARN: [{}.{}] {}", seconds.count(), nano_seconds.count(), before_metadata);
+			output(after_metadata);
 		}
 	}
 
 	template <typename... Args>
 	void error(const char *f, Args &&... args) const {
 		if (level <= Log_Levels::ERROR) {
-			fmt::MemoryWriter w;
-			w.write(f, std::forward<Args>(args)...);
-			output(w.c_str());
+			auto now = std::chrono::system_clock::now().time_since_epoch();
+			auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now);
+			now -= seconds;
+			auto nano_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now); 
+
+			auto before_metadata = fmt::format(f, std::forward<Args>(args)...);
+			auto after_metadata = fmt::format("ERROR: [{}.{}] {}", seconds.count(), nano_seconds.count(), before_metadata);
+			output(after_metadata);
 		}
 	}
 
 	template <typename... Args>
 	void fatal(const char *f, Args &&... args) const {
 		if (level <= Log_Levels::FATAL) {
-			fmt::MemoryWriter w;
-			w.write(f, std::forward<Args>(args)...);
-			output(w.c_str());
+			auto now = std::chrono::system_clock::now().time_since_epoch();
+			auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now);
+			now -= seconds;
+			auto nano_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now); 
+
+			auto before_metadata = fmt::format(f, std::forward<Args>(args)...);
+			auto after_metadata = fmt::format("FATAL: [{}.{}] {}", seconds.count(), nano_seconds.count(), before_metadata);
+			output(after_metadata);
 		}
 	}
 
@@ -120,7 +148,7 @@ private:
 
 	Log_Levels level;
 
-	void output(const char *log_string) {
-		printf("%s\n", log_string);
+	void output(const std::string &log_string) const {
+		printf("%s\n", log_string.c_str());
 	}
 };
