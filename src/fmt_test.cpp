@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 
-#include <roslog_fmt/fmt_logger.hpp>
+#include <ros2log/fmt_logger.hpp>
 
 int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
