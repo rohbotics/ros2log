@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>roslog_fmt</name>
+  <name>ros2log</name>
   <version>0.0.0</version>
-  <description>The roslog_fmt package</description>
+  <description>The ros2log package</description>
 
   <maintainer email="rohan@osrfoundation.org">rohan</maintainer>
 
