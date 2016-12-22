@@ -1,143 +1,126 @@
-#include <rclcpp/rclcpp.hpp>
 #include <fmt/format.h>
+#include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include <chrono>
 
+enum class Log_Levels { DEBUG, INFO, WARN, ERROR, FATAL, NONE };
 
-enum class Log_Levels
-{
-	DEBUG,
-	INFO,
-	WARN,
-	ERROR,
-	FATAL,
-	NONE
-};
+enum class Log_Color { RED, YELLOW, GREEN, DEFAULT };
 
-enum class Log_Color
-{
-	RED,
-	YELLOW,
-	GREEN,
-	DEFAULT
-};
+class Logger {
+ public:
+  Logger(std::shared_ptr<rclcpp::node::Node> n)
+      : node(n), level(Log_Levels::INFO) {
+    std::vector<rclcpp::parameter::ParameterVariant> params;
+    params.emplace_back("log_level", "INFO");
+    node->set_parameters(params);
 
-class Logger
-{
-public:
-	Logger(std::shared_ptr<rclcpp::node::Node> n) : node(n), level(Log_Levels::INFO) {
+    node->register_param_change_callback([=](
+        const std::vector<rclcpp::parameter::ParameterVariant>& parameters) {
+      rcl_interfaces::msg::SetParametersResult result;
+      result.successful = true;
 
-		std::vector<rclcpp::parameter::ParameterVariant> params;
-		params.emplace_back("log_level", "INFO");
-		node->set_parameters(params);
+      for (auto param : parameters) {
+        if ("log_level" == param.get_name()) {
+          if (param.get_type() ==
+              rcl_interfaces::msg::ParameterType::PARAMETER_STRING) {
+            std::string level_str = param.get_value<std::string>();
 
-		node->register_param_change_callback(
-			[=](const std::vector<rclcpp::parameter::ParameterVariant>& parameters) {
-				rcl_interfaces::msg::SetParametersResult result;
-				result.successful = true;
+            if (level_str == "DEBUG")
+              level = Log_Levels::DEBUG;
 
-				for(auto param : parameters) {
-					if ("log_level" == param.get_name()) {
-						if (param.get_type() == rcl_interfaces::msg::ParameterType::PARAMETER_STRING) {
-							std::string level_str = param.get_value<std::string>();
+            else if (level_str == "INFO")
+              level = Log_Levels::INFO;
 
-							if (level_str == "DEBUG")
-								level = Log_Levels::DEBUG;
+            else if (level_str == "WARN")
+              level = Log_Levels::WARN;
 
-							else if (level_str == "INFO")
-								level = Log_Levels::INFO;
+            else if (level_str == "ERROR")
+              level = Log_Levels::ERROR;
 
-							else if (level_str == "WARN")
-								level = Log_Levels::WARN;
+            else if (level_str == "FATAL")
+              level = Log_Levels::FATAL;
 
-							else if (level_str == "ERROR")
-								level = Log_Levels::ERROR;
+            else if (level_str == "NONE")
+              level = Log_Levels::NONE;
 
-							else if (level_str == "FATAL")
-								level = Log_Levels::FATAL;
+            else {
+              result.successful = false;
+              result.reason =
+                  "log_level must be one of: DEBUG, INFO, WARN, ERROR, FATAL, "
+                  "NONE";
+            }
+          } else {
+            result.successful = false;
+            result.reason = "log_level must be a string";
+          }
+        }
+      }
 
-							else if (level_str == "NONE")
-								level = Log_Levels::NONE;
+      return result;
+    });
 
-							else {
-								result.successful = false;
-								result.reason = "log_level must be one of: DEBUG, INFO, WARN, ERROR, FATAL, NONE";
-							}
-						}
-						else {
-							result.successful = false;
-							result.reason = "log_level must be a string";
-						} 
-					}
-				}
+    rosout_pub = node->create_publisher<std_msgs::msg::String>("rosout");
+  };
 
-				return result;
-			}
-		);
+  Logger() = default;
+  ~Logger() = default;
 
-		rosout_pub = node->create_publisher<std_msgs::msg::String>("rosout");
+  void debug(const std::string& log_string) const {
+    if (level <= Log_Levels::DEBUG) {
+      output(log_string, Log_Color::GREEN);
+    }
+  }
 
-	};
+  void info(const std::string& log_string) const {
+    if (level <= Log_Levels::INFO) {
+      output(log_string, Log_Color::DEFAULT);
+    }
+  }
 
-	Logger() = default;
-	~Logger() = default;
+  void warn(const std::string& log_string) const {
+    if (level <= Log_Levels::WARN) {
+      output(log_string, Log_Color::YELLOW);
+    }
+  }
 
-	void debug(const std::string& log_string) const {
-		if (level <= Log_Levels::DEBUG) {
-			output(log_string, Log_Color::GREEN);
-		}
-	}
+  void error(const std::string& log_string) const {
+    if (level <= Log_Levels::ERROR) {
+      output(log_string, Log_Color::RED);
+    }
+  }
 
-	void info(const std::string& log_string) const {
-		if (level <= Log_Levels::INFO) {
-			output(log_string, Log_Color::DEFAULT);
-		}
-	}
+  void fatal(const std::string& log_string) const {
+    if (level <= Log_Levels::FATAL) {
+      output(log_string, Log_Color::RED);
+    }
+  }
 
-	void warn(const std::string& log_string) const {
-		if (level <= Log_Levels::WARN) {
-			output(log_string, Log_Color::YELLOW);
-		}
-	}
+ private:
+  std::shared_ptr<rclcpp::node::Node> node;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr rosout_pub;
 
-	void error(const std::string& log_string) const {
-		if (level <= Log_Levels::ERROR) {
-			output(log_string, Log_Color::RED);
-		}
-	}
+  Log_Levels level;
 
-	void fatal(const std::string& log_string) const {
-		if (level <= Log_Levels::FATAL) {
-			output(log_string, Log_Color::RED);
-		}
-	}
+  void output(const std::string& log_string, Log_Color color) const {
+    switch (color) {
+      case Log_Color::RED:
+        printf("\x1b[31m%s\x1b[0m\n", log_string.c_str());
+        break;
+      case Log_Color::YELLOW:
+        printf("\x1b[33m%s\x1b[0m\n", log_string.c_str());
+        break;
+      case Log_Color::GREEN:
+        printf("\x1b[32m%s\x1b[0m\n", log_string.c_str());
+        break;
+      case Log_Color::DEFAULT:
+        printf("%s\n", log_string.c_str());
+        break;
+    }
 
-
-private:
-	std::shared_ptr<rclcpp::node::Node> node;
-	rclcpp::Publisher<std_msgs::msg::String>::SharedPtr rosout_pub;
-
-	Log_Levels level;
-
-	void output(const std::string& log_string, Log_Color color) const {
-		switch (color){
-			case Log_Color::RED:
-				printf("\x1b[31m%s\x1b[0m\n", log_string.c_str());
-				break;
-			case Log_Color::YELLOW:
-				printf("\x1b[33m%s\x1b[0m\n", log_string.c_str());
-				break;
-			case Log_Color::GREEN:
-				printf("\x1b[32m%s\x1b[0m\n", log_string.c_str());
-				break;
-			case Log_Color::DEFAULT:
-				printf("%s\n", log_string.c_str());
-				break;
-		}
-
-		auto message = std_msgs::msg::String();
-		message.data = log_string;
-		rosout_pub->publish(message);
-	}
+    auto message = std_msgs::msg::String();
+    message.data = log_string;
+    rosout_pub->publish(message);
+  }
 };
