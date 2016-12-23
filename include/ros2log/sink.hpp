@@ -1,9 +1,10 @@
-#pragma once
-#include <ros2log/enums.hpp>
+#ifndef SINK_H
+#define SINK_H
+
+enum class Log_Levels;
 
 using SinkFunction = std::function<void(Log_Levels, const char *)>;
-class Sink {
- public:
+struct Sink {
   Sink(std::string sink_name, Log_Levels starting_level, SinkFunction function)
       : name(sink_name),
         output_level(starting_level),
@@ -15,3 +16,5 @@ class Sink {
   Log_Levels output_level;
   SinkFunction output_function = nullptr;
 };
+
+#endif

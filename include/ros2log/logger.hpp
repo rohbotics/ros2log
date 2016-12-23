@@ -1,11 +1,15 @@
+#ifndef LOGGER_H
+#define LOGGER_H
+
 #include <fmt/format.h>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
 
-#include <ros2log/enums.hpp>
 #include <ros2log/sink.hpp>
 
 #include <chrono>
+
+enum class Log_Levels { DEBUG, INFO, WARN, ERROR, FATAL, NONE };
 
 class Logger {
  public:
@@ -81,3 +85,5 @@ class Logger {
     }
   }
 };
+
+#endif
