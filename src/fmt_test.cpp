@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
   rosout_pub = node->create_publisher<std_msgs::msg::String>("rosout");
 
   log.register_sink(Sink("print", Log_Levels::INFO,
-                         [](Log_Levels level, const char *log_string) {
+                         [](Log_Levels level, MetaData md, const char *log_string) {
                            switch (level) {
                              case Log_Levels::FATAL:
                              case Log_Levels::ERROR:
@@ -41,21 +41,21 @@ int main(int argc, char **argv) {
 
   log.register_sink(
       Sink("rosout", Log_Levels::INFO,
-           [rosout_pub](Log_Levels level, const char *log_string) {
+           [rosout_pub](Log_Levels level, MetaData md, const char *log_string) {
              auto message = std_msgs::msg::String();
              message.data = log_string;
              rosout_pub->publish(message);
            }));
 
-  rclcpp::WallRate loop_rate(5);
+  rclcpp::WallRate loop_rate(1);
 
   int i = 0;
   while (rclcpp::ok()) {
-    log.debug("Friendly debug {}", i);
-    log.info("FYI {}", i);
-    log.warn("Foo warning! {}", i);
-    log.error("Bar error! {}", i);
-    log.fatal("----FATALITY----");
+    LOG_DEBUG(log, "Friendly debug {}", i);
+    LOG_INFO(log, "FYI {}", i);
+    LOG_WARN(log, "Foo warning! {}", i);
+    LOG_ERROR(log, "Bar error! {}", i);
+    LOG_FATAL(log, "----FATALITY----");
     i++;
 
     rclcpp::spin_some(node);

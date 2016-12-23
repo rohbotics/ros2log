@@ -2,8 +2,9 @@
 #define SINK_H
 
 enum class Log_Levels;
+struct MetaData;
 
-using SinkFunction = std::function<void(Log_Levels, const char *)>;
+using SinkFunction = std::function<void(Log_Levels, MetaData, const char *)>;
 struct Sink {
   Sink(std::string sink_name, Log_Levels starting_level, SinkFunction function)
       : name(sink_name),
