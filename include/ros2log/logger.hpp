@@ -9,8 +9,7 @@
 
 class Logger {
  public:
-  Logger(std::shared_ptr<rclcpp::node::Node> n)
-      : node(n) {
+  Logger(std::shared_ptr<rclcpp::node::Node> n) : node(n) {
     std::vector<rclcpp::parameter::ParameterVariant> params;
     params.emplace_back("log_level", "INFO");
     node->set_parameters(params);
@@ -48,7 +47,8 @@ class Logger {
               else {
                 result.successful = false;
                 result.reason =
-                    "log_level must be one of: DEBUG, INFO, WARN, ERROR, FATAL, "
+                    "log_level must be one of: DEBUG, INFO, WARN, ERROR, "
+                    "FATAL, "
                     "NONE";
               }
             } else {
@@ -66,16 +66,14 @@ class Logger {
   Logger() = default;
   ~Logger() = default;
 
-  virtual void register_sink(const Sink& sink) {
-    sinks.push_back(sink);
-  }
+  virtual void register_sink(const Sink& sink) { sinks.push_back(sink); }
 
  protected:
   std::shared_ptr<rclcpp::node::Node> node;
 
   std::vector<Sink> sinks;
 
-  virtual void output(Log_Levels level, const char * log_string) const {
+  virtual void output(Log_Levels level, const char* log_string) const {
     for (auto& sink : sinks) {
       if (level >= sink.output_level) {
         sink.output_function(level, log_string);

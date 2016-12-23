@@ -6,7 +6,6 @@
 
 class FmtLogger : public Logger {
  public:
-
   using Logger::Logger;
 
   template <typename... Args>
@@ -19,7 +18,8 @@ class FmtLogger : public Logger {
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
     output(Log_Levels::DEBUG,
-        add_metadata("DEBUG", seconds.count(), nano_seconds.count(), data).c_str());
+           add_metadata("DEBUG", seconds.count(), nano_seconds.count(), data)
+               .c_str());
   }
 
   template <typename... Args>
@@ -32,7 +32,8 @@ class FmtLogger : public Logger {
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
     output(Log_Levels::INFO,
-        add_metadata("INFO", seconds.count(), nano_seconds.count(), data).c_str());
+           add_metadata("INFO", seconds.count(), nano_seconds.count(), data)
+               .c_str());
   }
 
   template <typename... Args>
@@ -45,7 +46,8 @@ class FmtLogger : public Logger {
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
     output(Log_Levels::WARN,
-        add_metadata("WARN", seconds.count(), nano_seconds.count(), data).c_str());
+           add_metadata("WARN", seconds.count(), nano_seconds.count(), data)
+               .c_str());
   }
 
   template <typename... Args>
@@ -58,7 +60,8 @@ class FmtLogger : public Logger {
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
     output(Log_Levels::ERROR,
-        add_metadata("ERROR", seconds.count(), nano_seconds.count(), data).c_str());
+           add_metadata("ERROR", seconds.count(), nano_seconds.count(), data)
+               .c_str());
   }
 
   template <typename... Args>
@@ -71,7 +74,8 @@ class FmtLogger : public Logger {
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
     output(Log_Levels::FATAL,
-        add_metadata("FATAL", seconds.count(), nano_seconds.count(), data).c_str());
+           add_metadata("FATAL", seconds.count(), nano_seconds.count(), data)
+               .c_str());
   }
 
  protected:
