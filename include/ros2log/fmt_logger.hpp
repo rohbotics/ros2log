@@ -81,7 +81,7 @@ class FmtLogger : public Logger {
  protected:
   std::string add_metadata(const std::string &level, int secs, int nsecs,
                            const std::string &data) const {
-    return fmt::format("{level:<5}: [{secs}.{nsecs}] {data}",
+    return fmt::format("{level:<5}: [{secs}.{nsecs:0<9}] {data}",
                        FMT_CAPTURE(level, secs, nsecs, data));
   }
 };
