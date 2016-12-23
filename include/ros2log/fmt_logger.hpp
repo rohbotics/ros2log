@@ -10,50 +10,44 @@ class FmtLogger : public Logger {
   using Logger::Logger;
 
   template <typename... Args>
-  void debug(const char * file, const char * function, int line, 
-    const char *fmt, Args &&... args) const {
-
+  void debug(const char *file, const char *function, int line, const char *fmt,
+             Args &&... args) const {
     auto md = MetaData{file, function, line};
     auto data = fmt::format(fmt, std::forward<Args>(args)...);
     output(Log_Levels::DEBUG, md, data.c_str());
   }
 
   template <typename... Args>
-  void info(const char * file, const char * function, int line, 
-    const char *fmt, Args &&... args) const {
-
+  void info(const char *file, const char *function, int line, const char *fmt,
+            Args &&... args) const {
     auto md = MetaData{file, function, line};
     auto data = fmt::format(fmt, std::forward<Args>(args)...);
     output(Log_Levels::INFO, md, data.c_str());
   }
 
   template <typename... Args>
-  void warn(const char * file, const char * function, int line, 
-    const char *fmt, Args &&... args) const {
-
+  void warn(const char *file, const char *function, int line, const char *fmt,
+            Args &&... args) const {
     auto md = MetaData{file, function, line};
     auto data = fmt::format(fmt, std::forward<Args>(args)...);
     output(Log_Levels::WARN, md, data.c_str());
   }
 
   template <typename... Args>
-  void error(const char * file, const char * function, int line, 
-    const char *fmt, Args &&... args) const {
-
+  void error(const char *file, const char *function, int line, const char *fmt,
+             Args &&... args) const {
     auto md = MetaData{file, function, line};
     auto data = fmt::format(fmt, std::forward<Args>(args)...);
     output(Log_Levels::ERROR, md, data.c_str());
   }
 
   template <typename... Args>
-  void fatal(const char * file, const char * function, int line, 
-    const char *fmt, Args &&... args) const {
-
+  void fatal(const char *file, const char *function, int line, const char *fmt,
+             Args &&... args) const {
     auto md = MetaData{file, function, line};
     auto data = fmt::format(fmt, std::forward<Args>(args)...);
     output(Log_Levels::FATAL, md, data.c_str());
   }
-
 };
 
 #endif

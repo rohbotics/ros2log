@@ -10,38 +10,41 @@
 #include <chrono>
 
 #ifndef LOG_DEBUG
-#define LOG_DEBUG(_logger, ...) _logger.debug(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define LOG_DEBUG(_logger, ...) \
+  _logger.debug(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
 #ifndef LOG_INFO
-#define LOG_INFO(_logger, ...) _logger.info(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define LOG_INFO(_logger, ...) \
+  _logger.info(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
 #ifndef LOG_WARN
-#define LOG_WARN(_logger, ...) _logger.warn(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define LOG_WARN(_logger, ...) \
+  _logger.warn(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
 #ifndef LOG_ERROR
-#define LOG_ERROR(_logger, ...) _logger.error(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define LOG_ERROR(_logger, ...) \
+  _logger.error(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
 #ifndef LOG_FATAL
-#define LOG_FATAL(_logger, ...) _logger.fatal(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define LOG_FATAL(_logger, ...) \
+  _logger.fatal(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
-
 
 enum class Log_Levels { DEBUG, INFO, WARN, ERROR, FATAL, NONE };
 
-struct MetaData
-{
-  MetaData(const char * _file, const char * _function, int _line) :
-    file(_file), function(_function), line(_line) {};
+struct MetaData {
+  MetaData(const char* _file, const char* _function, int _line)
+      : file(_file), function(_function), line(_line){};
 
   MetaData() = default;
 
-  const char * file     = nullptr;
-  const char * function = nullptr; 
-  int line = 0; 
+  const char* file = nullptr;
+  const char* function = nullptr;
+  int line = 0;
 };
 
 class Logger {
@@ -111,18 +114,18 @@ class Logger {
   std::vector<Sink> sinks;
 
   virtual void output(Log_Levels level, MetaData md,
-    const char* log_string) const {
-
+                      const char* log_string) const {
     for (auto& sink : sinks) {
       if (level >= sink.output_level) {
-        sink.output_function(level, md,
-          add_metadata(level_to_string(level), md, log_string).c_str());
+        sink.output_function(
+            level, md,
+            add_metadata(level_to_string(level), md, log_string).c_str());
       }
     }
   }
 
-  static const char * level_to_string(Log_Levels level) {
-    switch(level) {
+  static const char* level_to_string(Log_Levels level) {
+    switch (level) {
       case Log_Levels::FATAL:
         return "FATAL";
         break;
@@ -142,14 +145,13 @@ class Logger {
   }
 
   // TODO Do this function without fmt
-  std::string add_metadata(const char * level,
-                           MetaData md,
-                           const char * data) const {
-
+  std::string add_metadata(const char* level, MetaData md,
+                           const char* data) const {
     auto now = std::chrono::system_clock::now().time_since_epoch();
     auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now);
     now -= seconds;
-    auto nano_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now);
+    auto nano_seconds =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(now);
 
     auto secs = seconds.count();
     auto nsecs = nano_seconds.count();
@@ -158,8 +160,9 @@ class Logger {
     auto function = md.function;
     auto line = md.line;
 
-    return fmt::format("{level:<5}: [{secs}.{nsecs:0<9}] {data}",
-                       FMT_CAPTURE(level, secs, nsecs, data, file, function, line));
+    return fmt::format(
+        "{level:<5}: [{secs}.{nsecs:0<9}] {data}",
+        FMT_CAPTURE(level, secs, nsecs, data, file, function, line));
   }
 };
 
