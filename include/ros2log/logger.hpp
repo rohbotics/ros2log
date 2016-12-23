@@ -79,27 +79,5 @@ class Logger {
         sink.output_function(level, log_string);
       }
     }
-    // if (level >= print_level) {
-    //   switch (color) {
-    //     case Log_Color::RED:
-    //       printf("\x1b[31m%s\x1b[0m\n", log_string);
-    //       break;
-    //     case Log_Color::YELLOW:
-    //       printf("\x1b[33m%s\x1b[0m\n", log_string);
-    //       break;
-    //     case Log_Color::GREEN:
-    //       printf("\x1b[32m%s\x1b[0m\n", log_string);
-    //       break;
-    //     case Log_Color::DEFAULT:
-    //       printf("%s\n", log_string);
-    //       break;
-    //   }
-    // }
-
-    // if (level >= rosout_level) {
-    //   auto message = std_msgs::msg::String();
-    //   message.data = log_string;
-    //   rosout_pub->publish(message);
-    // }
   }
 };
