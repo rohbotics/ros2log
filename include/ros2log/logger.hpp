@@ -23,7 +23,7 @@ class Logger {
         for (auto& sink : sinks) {
           if (sink.name + "_level" == param.get_name()) {
             if (param.get_type() ==
-                rcl_interfaces::msg::ParameterType::PARAMETER_STRING) {
+                rclcpp::parameter::ParameterType::PARAMETER_STRING) {
               std::string level_str = param.get_value<std::string>();
 
               if (level_str == "DEBUG")
