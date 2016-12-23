@@ -108,20 +108,20 @@ class Logger {
   Log_Levels print_level;
   Log_Levels rosout_level;
 
-  virtual void output(Log_Levels level, const std::string& log_string, Log_Color color) const {
+  virtual void output(Log_Levels level, const char * log_string, Log_Color color) const {
     if (level >= print_level) {
       switch (color) {
         case Log_Color::RED:
-          printf("\x1b[31m%s\x1b[0m\n", log_string.c_str());
+          printf("\x1b[31m%s\x1b[0m\n", log_string);
           break;
         case Log_Color::YELLOW:
-          printf("\x1b[33m%s\x1b[0m\n", log_string.c_str());
+          printf("\x1b[33m%s\x1b[0m\n", log_string);
           break;
         case Log_Color::GREEN:
-          printf("\x1b[32m%s\x1b[0m\n", log_string.c_str());
+          printf("\x1b[32m%s\x1b[0m\n", log_string);
           break;
         case Log_Color::DEFAULT:
-          printf("%s\n", log_string.c_str());
+          printf("%s\n", log_string);
           break;
       }
     }

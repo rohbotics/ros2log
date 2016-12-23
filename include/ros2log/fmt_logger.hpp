@@ -19,7 +19,7 @@ class FmtLogger : Logger {
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
     output(Log_Levels::DEBUG,
-        add_metadata("DEBUG", seconds.count(), nano_seconds.count(), data), Log_Color::GREEN);
+        add_metadata("DEBUG", seconds.count(), nano_seconds.count(), data).c_str(), Log_Color::GREEN);
   }
 
   template <typename... Args>
@@ -32,7 +32,7 @@ class FmtLogger : Logger {
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
     output(Log_Levels::INFO,
-        add_metadata("INFO", seconds.count(), nano_seconds.count(), data), Log_Color::DEFAULT);
+        add_metadata("INFO", seconds.count(), nano_seconds.count(), data).c_str(), Log_Color::DEFAULT);
   }
 
   template <typename... Args>
@@ -45,7 +45,7 @@ class FmtLogger : Logger {
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
     output(Log_Levels::WARN,
-        add_metadata("WARN", seconds.count(), nano_seconds.count(), data), Log_Color::YELLOW);
+        add_metadata("WARN", seconds.count(), nano_seconds.count(), data).c_str(), Log_Color::YELLOW);
   }
 
   template <typename... Args>
@@ -58,7 +58,7 @@ class FmtLogger : Logger {
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
     output(Log_Levels::ERROR,
-        add_metadata("ERROR", seconds.count(), nano_seconds.count(), data), Log_Color::RED);
+        add_metadata("ERROR", seconds.count(), nano_seconds.count(), data).c_str(), Log_Color::RED);
   }
 
   template <typename... Args>
@@ -71,7 +71,7 @@ class FmtLogger : Logger {
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
     output(Log_Levels::FATAL,
-        add_metadata("FATAL", seconds.count(), nano_seconds.count(), data), Log_Color::RED);
+        add_metadata("FATAL", seconds.count(), nano_seconds.count(), data).c_str(), Log_Color::RED);
   }
 
  protected:
