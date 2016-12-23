@@ -9,10 +9,17 @@
 
 #include <chrono>
 
+#ifndef NDEBUG
 #ifndef LOG_DEBUG
 #define LOG_DEBUG(_logger, ...) \
   _logger.debug(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
+#else 
+#ifndef LOG_DEBUG
+#define LOG_DEBUG(_logger, ...)
+#endif
+#endif
+
 
 #ifndef LOG_INFO
 #define LOG_INFO(_logger, ...) \
