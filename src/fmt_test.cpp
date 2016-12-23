@@ -1,11 +1,12 @@
 #include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <rclcpp/logging.hpp>
 
 #include <fmt/format.h>
 
 #include <string>
 #include <utility>
-
+  
 #include <ros2log/fmt_logger.hpp>
 #include <ros2log/sink.hpp>
 

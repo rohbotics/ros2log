@@ -1,10 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <fmt/format.h>
-#include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/string.hpp>
-
+#include <fmt/format.h> 
 #include <ros2log/sink.hpp>
 
 #include <chrono>

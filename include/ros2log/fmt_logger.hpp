@@ -2,7 +2,6 @@
 #define FMT_LOGGER_H
 
 #include <fmt/format.h>
-#include <rclcpp/rclcpp.hpp>
 #include <ros2log/logger.hpp>
 
 class FmtLogger : public Logger {
