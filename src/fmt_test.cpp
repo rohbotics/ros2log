@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr rosout_pub;
   rosout_pub = node->create_publisher<std_msgs::msg::String>("rosout");
 
-  log.register_sink(Sink("print", Log_Levels::INFO, [=](Log_Levels level, const char * log_string) {
+  log.register_sink(Sink("print", Log_Levels::INFO, [](Log_Levels level, const char * log_string) {
     switch (level) {
       case Log_Levels::FATAL:
       case Log_Levels::ERROR:
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
     }
   }));
 
-  log.register_sink(Sink("rosout", Log_Levels::INFO, [=](Log_Levels level, const char * log_string) {
+  log.register_sink(Sink("rosout", Log_Levels::INFO, [rosout_pub](Log_Levels level, const char * log_string) {
     auto message = std_msgs::msg::String();
     message.data = log_string;
     rosout_pub->publish(message);
