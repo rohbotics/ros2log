@@ -4,11 +4,10 @@
 
 #include <chrono>
 
-class FmtLogger {
+class FmtLogger : Logger {
  public:
-  FmtLogger(std::shared_ptr<rclcpp::node::Node> node) : logger(node){};
 
-  ~FmtLogger() = default;
+  using Logger::Logger;
 
   template <typename... Args>
   void debug(const char *f, Args &&... args) const {
@@ -19,8 +18,8 @@ class FmtLogger {
         std::chrono::duration_cast<std::chrono::nanoseconds>(now);
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
-    logger.debug(
-        add_metadata("DEBUG", seconds.count(), nano_seconds.count(), data));
+    output(Log_Levels::DEBUG,
+        add_metadata("DEBUG", seconds.count(), nano_seconds.count(), data), Log_Color::GREEN);
   }
 
   template <typename... Args>
@@ -32,8 +31,8 @@ class FmtLogger {
         std::chrono::duration_cast<std::chrono::nanoseconds>(now);
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
-    logger.info(
-        add_metadata("INFO", seconds.count(), nano_seconds.count(), data));
+    output(Log_Levels::INFO,
+        add_metadata("INFO", seconds.count(), nano_seconds.count(), data), Log_Color::DEFAULT);
   }
 
   template <typename... Args>
@@ -45,8 +44,8 @@ class FmtLogger {
         std::chrono::duration_cast<std::chrono::nanoseconds>(now);
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
-    logger.warn(
-        add_metadata("WARN", seconds.count(), nano_seconds.count(), data));
+    output(Log_Levels::WARN,
+        add_metadata("WARN", seconds.count(), nano_seconds.count(), data), Log_Color::YELLOW);
   }
 
   template <typename... Args>
@@ -58,8 +57,8 @@ class FmtLogger {
         std::chrono::duration_cast<std::chrono::nanoseconds>(now);
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
-    logger.error(
-        add_metadata("ERROR", seconds.count(), nano_seconds.count(), data));
+    output(Log_Levels::ERROR,
+        add_metadata("ERROR", seconds.count(), nano_seconds.count(), data), Log_Color::RED);
   }
 
   template <typename... Args>
@@ -71,13 +70,11 @@ class FmtLogger {
         std::chrono::duration_cast<std::chrono::nanoseconds>(now);
 
     auto data = fmt::format(f, std::forward<Args>(args)...);
-    logger.fatal(
-        add_metadata("FATAL", seconds.count(), nano_seconds.count(), data));
+    output(Log_Levels::FATAL,
+        add_metadata("FATAL", seconds.count(), nano_seconds.count(), data), Log_Color::RED);
   }
 
- private:
-  Logger logger;
-
+ protected:
   std::string add_metadata(const std::string &level, int secs, int nsecs,
                            const std::string &data) const {
     return fmt::format("{level}: [{secs}.{nsecs}] {data}",
