@@ -80,9 +80,46 @@ class Logger {
   virtual void output(Log_Levels level, const char* log_string) const {
     for (auto& sink : sinks) {
       if (level >= sink.output_level) {
-        sink.output_function(level, log_string);
+        sink.output_function(level, 
+          add_metadata(level_to_string(level), log_string).c_str());
       }
     }
+  }
+
+  static const char * level_to_string(Log_Levels level) {
+    switch(level) {
+      case Log_Levels::FATAL:
+        return "FATAL";
+        break;
+      case Log_Levels::ERROR:
+        return "ERROR";
+        break;
+      case Log_Levels::WARN:
+        return "WARN";
+        break;
+      case Log_Levels::DEBUG:
+        return "DEBUG";
+        break;
+      case Log_Levels::INFO:
+        return "INFO";
+        break;
+    }
+  }
+
+  // TODO Do this function without fmt
+  std::string add_metadata(const char * level, 
+                           const char * data) const {
+
+    auto now = std::chrono::system_clock::now().time_since_epoch();
+    auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now);
+    now -= seconds;
+    auto nano_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now);
+
+    auto secs = seconds.count();
+    auto nsecs = nano_seconds.count();
+
+    return fmt::format("{level:<5}: [{secs}.{nsecs:0<9}] {data}",
+                       FMT_CAPTURE(level, secs, nsecs, data));
   }
 };
 
