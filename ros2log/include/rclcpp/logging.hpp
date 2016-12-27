@@ -59,7 +59,6 @@ void init_logger(std::shared_ptr<Logger> logger,
                 result.reason = "log_level must be a boolean";
               }
             }
-            
           }
         }
 
