@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
   auto parameter_service =
       std::make_shared<rclcpp::parameter_service::ParameterService>(node);
 
-  auto log = std::make_shared<FmtLogger>(node);
+  auto log = std::make_shared<FmtLogger>();
 
   rclcpp::init_logger(log, node);
 
