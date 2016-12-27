@@ -1,5 +1,8 @@
 // This file represents helper functions that will be in rclcpp
 
+#ifndef RCLCPP_LOGGING_H
+#define RCLCPP_LOGGING_H
+
 #include <ros2log/logger.hpp>
 
 namespace rclcpp {
@@ -26,3 +29,5 @@ void init_logger(Logger& logger, std::shared_ptr<rclcpp::node::Node> Node) {
            }));
 }
 }
+
+#endif
