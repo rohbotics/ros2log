@@ -37,21 +37,29 @@ void init_logger(std::shared_ptr<Logger> logger,
                 else if (level_str == "FATAL")
                   sink.output_level = Log_Levels::FATAL;
 
-                else if (level_str == "NONE")
-                  sink.output_level = Log_Levels::NONE;
-
                 else {
                   result.successful = false;
                   result.reason =
                       "log_level must be one of: DEBUG, INFO, WARN, ERROR, "
-                      "FATAL, "
-                      "NONE";
+                      "FATAL";
                 }
               } else {
                 result.successful = false;
                 result.reason = "log_level must be a string";
               }
             }
+
+            if ("logging/" + sink.name + "/enabled" == param.get_name()) {
+              if (param.get_type() ==
+                  rclcpp::parameter::ParameterType::PARAMETER_BOOL) {
+                sink.enabled = param.get_value<bool>();
+
+              } else {
+                result.successful = false;
+                result.reason = "log_level must be a boolean";
+              }
+            }
+            
           }
         }
 

@@ -38,7 +38,7 @@
   _logger->fatal(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
-enum class Log_Levels { DEBUG, INFO, WARN, ERROR, FATAL, NONE };
+enum class Log_Levels { DEBUG = 1, INFO = 2, WARN = 4, ERROR = 8, FATAL = 16};
 
 struct MetaData {
   MetaData(const char* _file, const char* _function, int _line)
@@ -72,7 +72,7 @@ class Logger {
   virtual void output(Log_Levels level, MetaData md,
                       const char* log_string) const {
     for (auto& sink : sinks) {
-      if (level >= sink.output_level) {
+      if (sink.enabled  && level >= sink.output_level) {
         sink.output_function(
             level, md,
             add_metadata(level_to_string(level), md, log_string).c_str());
