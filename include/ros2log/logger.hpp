@@ -1,9 +1,10 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <fmt/format.h> 
+#include <fmt/format.h>
 #include <ros2log/sink.hpp>
 
+#include <algorithm>
 #include <chrono>
 
 #ifndef NDEBUG
@@ -11,12 +12,11 @@
 #define LOG_DEBUG(_logger, ...) \
   _logger.debug(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
-#else 
+#else
 #ifndef LOG_DEBUG
 #define LOG_DEBUG(_logger, ...)
 #endif
 #endif
-
 
 #ifndef LOG_INFO
 #define LOG_INFO(_logger, ...) \
@@ -111,6 +111,12 @@ class Logger {
   ~Logger() = default;
 
   virtual void register_sink(const Sink& sink) { sinks.push_back(sink); }
+
+  virtual void deregister_sink(const std::string& name) {
+    sinks.erase(std::remove_if(sinks.begin(), sinks.end(), [name](Sink sink) {
+      return sink.name == name;
+    }));
+  }
 
  protected:
   std::shared_ptr<rclcpp::node::Node> node;
