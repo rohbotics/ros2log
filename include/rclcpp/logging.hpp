@@ -17,7 +17,7 @@ void init_logger(std::shared_ptr<Logger> logger,
 
         for (auto param : parameters) {
           for (auto& sink : logger->get_sinks()) {
-            if (sink.name + "_level" == param.get_name()) {
+            if ("logging/" + sink.name + "/level" == param.get_name()) {
               if (param.get_type() ==
                   rclcpp::parameter::ParameterType::PARAMETER_STRING) {
                 std::string level_str = param.get_value<std::string>();
