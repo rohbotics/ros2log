@@ -7,8 +7,8 @@
 
 namespace rclcpp {
 
-void init_logger(Logger& logger, std::shared_ptr<rclcpp::node::Node> Node) {
-  logger.register_sink(
+void init_logger(std::shared_ptr<Logger> logger, std::shared_ptr<rclcpp::node::Node> Node) {
+  logger->register_sink(
       Sink("print", Log_Levels::INFO,
            [](Log_Levels level, MetaData md, const char* log_string) {
              switch (level) {

@@ -9,6 +9,7 @@
   
 #include <ros2log/fmt_logger.hpp>
 #include <ros2log/sink.hpp>
+#include <ros2log/scoped_sinks.hpp>
 
 int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
@@ -17,14 +18,14 @@ int main(int argc, char **argv) {
   auto parameter_service =
       std::make_shared<rclcpp::parameter_service::ParameterService>(node);
 
-  FmtLogger log(node);
+  auto log = std::make_shared<FmtLogger>(node);
 
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr rosout_pub;
   rosout_pub = node->create_publisher<std_msgs::msg::String>("rosout");
 
   rclcpp::init_logger(log, node);
 
-  log.register_sink(
+  log->register_sink(
       Sink("rosout", Log_Levels::INFO,
            [rosout_pub](Log_Levels level, MetaData md, const char *log_string) {
              auto message = std_msgs::msg::String();
