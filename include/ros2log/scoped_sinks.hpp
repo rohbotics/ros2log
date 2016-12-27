@@ -1,28 +1,28 @@
 #ifndef SCOPED_SINKS_H
 #define SCOPED_SINKS_H
 
-#include <ros2log/logger.hpp>
-#include <rclcpp/rclcpp.hpp>
 #include <memory>
+#include <rclcpp/rclcpp.hpp>
+#include <ros2log/logger.hpp>
 
 class ScopedRosoutSink {
  public:
-  ScopedRosoutSink(std::shared_ptr<Logger> logger, std::shared_ptr<rclcpp::node::Node> n) : logger_(logger), node(n) {
+  ScopedRosoutSink(std::shared_ptr<Logger> logger,
+                   std::shared_ptr<rclcpp::node::Node> n)
+      : logger_(logger), node(n) {
     rosout_pub = node->create_publisher<std_msgs::msg::String>("rosout");
     logger_->register_sink(
         Sink("rosout", Log_Levels::INFO,
-             [this](Log_Levels level, MetaData md, const char *log_string) {
+             [this](Log_Levels level, MetaData md, const char* log_string) {
                auto message = std_msgs::msg::String();
                message.data = log_string;
                rosout_pub->publish(message);
              }));
   };
 
-  ~ScopedRosoutSink() {
-    logger_->deregister_sink("rosout");
-  };
+  ~ScopedRosoutSink() { logger_->deregister_sink("rosout"); };
 
-private:
+ private:
   std::shared_ptr<Logger> logger_;
 
   std::shared_ptr<rclcpp::node::Node> node;
@@ -53,11 +53,9 @@ class ScopedPrintSink {
              }));
   };
 
-  ~ScopedPrintSink() {
-    logger_->deregister_sink("print");
-  };
+  ~ScopedPrintSink() { logger_->deregister_sink("print"); };
 
-private:
+ private:
   std::shared_ptr<Logger> logger_;
 };
 
