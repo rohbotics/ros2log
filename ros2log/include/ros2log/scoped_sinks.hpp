@@ -12,17 +12,28 @@ class ScopedRosoutSink {
                    std::shared_ptr<rclcpp::node::Node> n)
       : logger_(logger), node(n) {
     rosout_pub = node->create_publisher<rosgraph_msgs::msg::Log>("rosout");
-    logger_->register_sink(
-        Sink("rosout", Log_Levels::INFO,
-             [this](Log_Levels level, MetaData md, const char* log_string) {
-               auto message = rosgraph_msgs::msg::Log();
-               message.level = static_cast<uint8_t>(level);
-               message.file = md.file;
-               message.function = md.function;
-               message.line = md.line;
-               message.msg = log_string;
-               rosout_pub->publish(message);
-             }));
+    logger_->register_sink(Sink(
+        "rosout", Log_Levels::INFO,
+        [this](Log_Levels level, MetaData md, const char* log_string) {
+          auto now = md.timestamp.time_since_epoch();
+          auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now);
+          now -= seconds;
+          auto nano_seconds =
+              std::chrono::duration_cast<std::chrono::nanoseconds>(now);
+
+          auto secs = seconds.count();
+          auto nsecs = nano_seconds.count();
+
+          auto message = rosgraph_msgs::msg::Log();
+          message.header.stamp.sec = secs;
+          message.header.stamp.nanosec = nsecs;
+          message.level = static_cast<uint8_t>(level);
+          message.file = md.file;
+          message.function = md.function;
+          message.line = md.line;
+          message.msg = log_string;
+          rosout_pub->publish(message);
+        }));
   };
 
   ~ScopedRosoutSink() { logger_->deregister_sink("rosout"); };

@@ -9,6 +9,7 @@ byte FATAL=16 #fatal/critical level
 ##
 ## Fields
 ##
+std_msgs/Header header
 byte level
 string name # name of the node
 string msg # message 
