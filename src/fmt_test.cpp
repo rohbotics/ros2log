@@ -20,18 +20,9 @@ int main(int argc, char **argv) {
 
   auto log = std::make_shared<FmtLogger>(node);
 
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr rosout_pub;
-  rosout_pub = node->create_publisher<std_msgs::msg::String>("rosout");
-
-  rclcpp::init_logger(log, node);
-
-  log->register_sink(
-      Sink("rosout", Log_Levels::INFO,
-           [rosout_pub](Log_Levels level, MetaData md, const char *log_string) {
-             auto message = std_msgs::msg::String();
-             message.data = log_string;
-             rosout_pub->publish(message);
-           }));
+  // rclcpp::init_logger(log, node);
+  ScopedPrintSink print_sink(log);
+  ScopedRosoutSink rosout_sink(log, node);
 
   rclcpp::WallRate loop_rate(1);
 
