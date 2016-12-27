@@ -20,9 +20,7 @@ int main(int argc, char **argv) {
 
   auto log = std::make_shared<FmtLogger>(node);
 
-  // rclcpp::init_logger(log, node);
-  ScopedPrintSink print_sink(log);
-  ScopedRosoutSink rosout_sink(log, node);
+  rclcpp::init_logger(log, node);
 
   rclcpp::WallRate loop_rate(1);
 
