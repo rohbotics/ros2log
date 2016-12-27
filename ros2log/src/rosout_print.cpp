@@ -1,10 +1,9 @@
 #include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/bool.hpp>
-#include <std_msgs/msg/string.hpp>
+#include <rosgraph_msgs/msg/log.hpp>
 #include <string>
 
-void topic_callback(const std_msgs::msg::String::SharedPtr msg) {
-  printf("%s\n", msg->data.c_str());
+void topic_callback(const rosgraph_msgs::msg::Log::SharedPtr msg) {
+  printf("%s\n", msg->msg.c_str());
 }
 
 int main(int argc, char **argv) {
@@ -14,7 +13,7 @@ int main(int argc, char **argv) {
   auto parameter_service =
       std::make_shared<rclcpp::parameter_service::ParameterService>(node);
 
-  auto subscription = node->create_subscription<std_msgs::msg::String>(
+  auto subscription = node->create_subscription<rosgraph_msgs::msg::Log>(
       "rosout", topic_callback);
   rclcpp::spin(node);
 }
