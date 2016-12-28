@@ -10,7 +10,7 @@
 #ifndef NDEBUG
 #ifndef LOG_DEBUG
 #define LOG_DEBUG(_logger, ...) \
-  _logger->debug(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+  _logger->log(Log_Levels::DEBUG, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 #else
 #ifndef LOG_DEBUG
@@ -20,22 +20,22 @@
 
 #ifndef LOG_INFO
 #define LOG_INFO(_logger, ...) \
-  _logger->info(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+  _logger->log(Log_Levels::INFO, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
 #ifndef LOG_WARN
 #define LOG_WARN(_logger, ...) \
-  _logger->warn(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+  _logger->log(Log_Levels::WARN, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
 #ifndef LOG_ERROR
 #define LOG_ERROR(_logger, ...) \
-  _logger->error(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+  _logger->log(Log_Levels::ERROR, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
 #ifndef LOG_FATAL
 #define LOG_FATAL(_logger, ...) \
-  _logger->fatal(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+  _logger->log(Log_Levels::FATAL, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
 enum class Log_Levels { DEBUG = 1, INFO = 2, WARN = 4, ERROR = 8, FATAL = 16 };
