@@ -12,10 +12,9 @@ class ScopedRosoutSink {
                    std::shared_ptr<rclcpp::node::Node> n)
       : logger_(logger), node(n) {
     rosout_pub = node->create_publisher<rosgraph_msgs::msg::Log>("rosout");
-    logger_->register_sink(Sink(
-        "rosout", Log_Levels::INFO,
-        [this](Log_Levels level, MetaData md, const char* log_string) {
-          auto now = md.timestamp.time_since_epoch();
+    logger_->register_sink(
+        Sink("rosout", Log_Levels::INFO, [this](LogMessage message) {
+          auto now = message.timestamp.time_since_epoch();
           auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now);
           now -= seconds;
           auto nano_seconds =
@@ -24,15 +23,15 @@ class ScopedRosoutSink {
           auto secs = seconds.count();
           auto nsecs = nano_seconds.count();
 
-          auto message = rosgraph_msgs::msg::Log();
-          message.header.stamp.sec = secs;
-          message.header.stamp.nanosec = nsecs;
-          message.level = static_cast<uint8_t>(level);
-          message.file = md.file;
-          message.function = md.function;
-          message.line = md.line;
-          message.msg = log_string;
-          rosout_pub->publish(message);
+          auto msg = rosgraph_msgs::msg::Log();
+          msg.header.stamp.sec = secs;
+          msg.header.stamp.nanosec = nsecs;
+          msg.level = static_cast<uint8_t>(message.level);
+          msg.file = message.file;
+          msg.function = message.function;
+          msg.line = message.line;
+          msg.msg = message.log_string;
+          rosout_pub->publish(msg);
         }));
   };
 
@@ -49,24 +48,23 @@ class ScopedPrintSink {
  public:
   ScopedPrintSink(std::shared_ptr<Logger> logger) : logger_(logger) {
     logger_->register_sink(
-        Sink("print", Log_Levels::INFO,
-             [](Log_Levels level, MetaData md, const char* log_string) {
-               switch (level) {
-                 case Log_Levels::FATAL:
-                 case Log_Levels::ERROR:
-                   printf("\x1b[31m%s\x1b[0m\n", log_string);
-                   break;
-                 case Log_Levels::WARN:
-                   printf("\x1b[33m%s\x1b[0m\n", log_string);
-                   break;
-                 case Log_Levels::DEBUG:
-                   printf("\x1b[32m%s\x1b[0m\n", log_string);
-                   break;
-                 case Log_Levels::INFO:
-                   printf("%s\n", log_string);
-                   break;
-               }
-             }));
+        Sink("print", Log_Levels::INFO, [](LogMessage message) {
+          switch (message.level) {
+            case Log_Levels::FATAL:
+            case Log_Levels::ERROR:
+              printf("\x1b[31m%s\x1b[0m\n", message.log_string.c_str());
+              break;
+            case Log_Levels::WARN:
+              printf("\x1b[33m%s\x1b[0m\n", message.log_string.c_str());
+              break;
+            case Log_Levels::DEBUG:
+              printf("\x1b[32m%s\x1b[0m\n", message.log_string.c_str());
+              break;
+            case Log_Levels::INFO:
+              printf("%s\n", message.log_string.c_str());
+              break;
+          }
+        }));
   };
 
   ~ScopedPrintSink() { logger_->deregister_sink("print"); };
