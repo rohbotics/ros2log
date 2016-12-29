@@ -19,7 +19,8 @@ int main(int argc, char **argv) {
       std::make_shared<rclcpp::parameter_service::ParameterService>(node);
 
   auto log = std::make_shared<FmtLogger>();
-  auto sub_log = std::make_shared<FmtLogger>("sub_log", log);
+  auto foo = std::make_shared<FmtLogger>("foo", log);
+  auto bar = std::make_shared<FmtLogger>("bar", foo);
 
   rclcpp::init_logger(log, node);
 
@@ -33,7 +34,8 @@ int main(int argc, char **argv) {
     LOG_ERROR(log, "Bar error! {}", i);
     LOG_FATAL(log, "----FATALITY----");
 
-    LOG_INFO(sub_log, "I am a sub_log");
+    LOG_INFO(foo, "I am a subloggger {}", i);
+    LOG_INFO(bar, "I am a subloggger of a sublogger {}", i);
     i++;
 
     rclcpp::spin_some(node);

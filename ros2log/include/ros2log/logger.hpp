@@ -56,7 +56,7 @@ struct LogMessage {
   LogMessage() = default;
 
   // Metadata about the log message
-  const char* logger_name;
+  const char* logger_name = nullptr;  
   Log_Levels level;
   std::chrono::time_point<std::chrono::system_clock> timestamp;
   const char* file = nullptr;
@@ -64,7 +64,7 @@ struct LogMessage {
   int line = 0;
 
   // The actual string that we want to log
-  const char* log_string;
+  const char* log_string = nullptr;
 };
 
 class Logger {
