@@ -32,6 +32,8 @@ int main(int argc, char **argv) {
     LOG_WARN(log, "Foo warning! {}", i);
     LOG_ERROR(log, "Bar error! {}", i);
     LOG_FATAL(log, "----FATALITY----");
+
+    LOG_INFO(sub_log, "I am a sub_log");
     i++;
 
     rclcpp::spin_some(node);

@@ -41,11 +41,12 @@
 enum class Log_Levels { DEBUG = 1, INFO = 2, WARN = 4, ERROR = 8, FATAL = 16 };
 
 struct LogMessage {
-  LogMessage(Log_Levels _level,
+  LogMessage(const char* _logger_name, Log_Levels _level,
              std::chrono::time_point<std::chrono::system_clock> _timestamp,
              const char* _file, const char* _function, int _line,
              const char* _log_string)
-      : level(_level),
+      : logger_name(_logger_name),
+        level(_level),
         timestamp(_timestamp),
         file(_file),
         function(_function),
@@ -55,6 +56,7 @@ struct LogMessage {
   LogMessage() = default;
 
   // Metadata about the log message
+  const char* logger_name;
   Log_Levels level;
   std::chrono::time_point<std::chrono::system_clock> timestamp;
   const char* file = nullptr;
@@ -69,7 +71,7 @@ class Logger {
  public:
   Logger(const std::string& logger_name = "",
          std::shared_ptr<Logger> logger_parent = nullptr)
-      : name(logger_name), parent(parent){};
+      : name(logger_name), parent(logger_parent){};
   ~Logger() = default;
 
   virtual void register_sink(const Sink& sink) {
@@ -98,9 +100,6 @@ class Logger {
   }
 
   virtual std::string get_name() {
-    if (parent != nullptr) {
-      return parent->get_name();
-    }
     return name;
   }
 
@@ -111,11 +110,10 @@ class Logger {
   std::shared_ptr<Logger> parent;
 
   virtual void output(LogMessage& message) const {
-    if (parent != nullptr) {
+    if (parent) {
       parent->output(message);
       return;
     }
-
     for (auto& sink : sinks) {
       if (sink.enabled && message.level >= sink.output_level) {
         sink.output_function(message);
