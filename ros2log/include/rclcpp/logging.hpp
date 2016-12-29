@@ -18,7 +18,7 @@ void init_logger(std::shared_ptr<Logger> logger,
 
         for (auto param : parameters) {
           for (auto& sink : logger->get_sinks()) {
-            if ("logging/" + sink.name + "/level" == param.get_name()) {
+            if ("logging/sinks/" + sink.name + "/level" == param.get_name()) {
               if (param.get_type() ==
                   rclcpp::parameter::ParameterType::PARAMETER_STRING) {
                 std::string level_str = param.get_value<std::string>();
@@ -50,7 +50,7 @@ void init_logger(std::shared_ptr<Logger> logger,
               }
             }
 
-            if ("logging/" + sink.name + "/enabled" == param.get_name()) {
+            if ("logging/sinks/" + sink.name + "/enabled" == param.get_name()) {
               if (param.get_type() ==
                   rclcpp::parameter::ParameterType::PARAMETER_BOOL) {
                 sink.enabled = param.get_value<bool>();

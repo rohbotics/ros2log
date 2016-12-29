@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     LOG_FATAL(log, "----FATALITY----");
 
     LOG_INFO(foo, "I am a subloggger {}", i);
-    LOG_INFO(bar, "I am a subloggger of a sublogger {}", i);
+    LOG_DEBUG(bar, "I am a subloggger of a sublogger {}", i);
     i++;
 
     rclcpp::spin_some(node);
