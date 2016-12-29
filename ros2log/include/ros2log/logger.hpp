@@ -111,7 +111,7 @@ class Logger {
 
   std::shared_ptr<Logger> parent;
 
-  virtual void output(LogMessage message) const {
+  virtual void output(LogMessage& message) const {
     if (parent != nullptr) {
       parent->output(message);
       return;

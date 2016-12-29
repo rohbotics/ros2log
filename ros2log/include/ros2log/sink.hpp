@@ -4,7 +4,7 @@
 enum class Log_Levels;
 struct LogMessage;
 
-using SinkFunction = std::function<void(LogMessage)>;
+using SinkFunction = std::function<void(LogMessage&)>;
 struct Sink {
   Sink(std::string sink_name, Log_Levels starting_level, SinkFunction function)
       : name(sink_name),
