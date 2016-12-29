@@ -9,7 +9,7 @@ find_package(rosgraph_msgs REQUIRED)
 
 
 include_directories(include ${rclcpp_INCLUDE_DIRS} ${fmt_INCLUDE_DIRS} ${rosgraph_msgs_INCLUDE_DIRS})
-link_directories(${rclcpp_LIBRARY_DIRS})
+link_directories(${rclcpp_LIBRARY_DIRS} ${rosgraph_msgs_INCLUDE_DIRS})
 
 add_executable(fmt_test src/fmt_test.cpp)
 target_link_libraries(fmt_test
@@ -24,7 +24,6 @@ add_definitions(-std=c++11)
 add_executable(rosout_print src/rosout_print.cpp)
 target_link_libraries(rosout_print
   ${rclcpp_LIBRARIES}
-  ${std_msgs_LIBRARIES} 
   ${rosgraph_msgs_LIBRARIES}
 )
 
