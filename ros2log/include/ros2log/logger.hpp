@@ -55,24 +55,55 @@ struct MetaData {
 
 class Logger {
  public:
-  Logger() = default;
+  Logger(const std::string& logger_name = "", 
+    std::shared_ptr<Logger> logger_parent = nullptr) : name(logger_name), parent(parent) {};
   ~Logger() = default;
 
-  virtual void register_sink(const Sink& sink) { sinks.push_back(sink); }
+  virtual void register_sink(const Sink& sink) {
+    if (parent != nullptr) {
+      parent->register_sink(sink);
+      return;
+    }
+    sinks.push_back(sink); 
+  }
 
   virtual void deregister_sink(const std::string& name) {
+    if (parent != nullptr) {
+      parent->deregister_sink(name);
+      return;
+    }
     sinks.erase(std::remove_if(sinks.begin(), sinks.end(), [name](Sink sink) {
       return sink.name == name;
     }));
   }
 
-  virtual std::vector<Sink>& get_sinks() { return sinks; }
+  virtual std::vector<Sink>& get_sinks() {
+    if (parent != nullptr) {
+      return parent->get_sinks();
+    } 
+    return sinks; 
+  }
+
+  virtual std::string get_name() {
+    if (parent != nullptr) {
+      return parent->get_name();
+    }   
+    return name;
+  }
 
  protected:
   std::vector<Sink> sinks;
+  std::string name;
+
+  std::shared_ptr<Logger> parent;
 
   virtual void output(Log_Levels level, MetaData md,
                       const char* log_string) const {
+    if (parent != nullptr) {
+      parent->output(level, md, log_string);
+      return;
+    }
+
     for (auto& sink : sinks) {
       if (sink.enabled && level >= sink.output_level) {
         sink.output_function(
@@ -120,7 +151,7 @@ class Logger {
 
     return fmt::format(
         "{level:<5}: [{secs}.{nsecs:0<9}] {data}",
-        FMT_CAPTURE(level, secs, nsecs, data, file, function, line));
+        FMT_CAPTURE(level, secs, nsecs, data, file, function, line, name));
   }
 };
 
