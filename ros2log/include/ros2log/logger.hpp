@@ -1,7 +1,6 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <fmt/format.h>
 #include <ros2log/sink.hpp>
 
 #include <algorithm>
@@ -123,47 +122,6 @@ class Logger {
       }
     }
   }
-
-  static const char* level_to_string(Log_Levels level) {
-    switch (level) {
-      case Log_Levels::FATAL:
-        return "FATAL";
-        break;
-      case Log_Levels::ERROR:
-        return "ERROR";
-        break;
-      case Log_Levels::WARN:
-        return "WARN";
-        break;
-      case Log_Levels::DEBUG:
-        return "DEBUG";
-        break;
-      case Log_Levels::INFO:
-        return "INFO";
-        break;
-    }
-  }
-
-  // TODO Do this function without fmt
-  // std::string add_metadata(const char* level, MetaData md,
-  //                          const char* data) const {
-  //   auto now = md.timestamp.time_since_epoch();
-  //   auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now);
-  //   now -= seconds;
-  //   auto nano_seconds =
-  //       std::chrono::duration_cast<std::chrono::nanoseconds>(now);
-
-  //   auto secs = seconds.count();
-  //   auto nsecs = nano_seconds.count();
-
-  //   auto file = md.file;
-  //   auto function = md.function;
-  //   auto line = md.line;
-
-  //   return fmt::format(
-  //       "{level:<5}: [{secs}.{nsecs:0<9}] {data}",
-  //       FMT_CAPTURE(level, secs, nsecs, data, file, function, line, name));
-  // }
 };
 
 #endif

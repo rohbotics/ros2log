@@ -6,6 +6,8 @@
 #include <ros2log/logger.hpp>
 #include <rosgraph_msgs/msg/log.hpp>
 
+#include <fmt/format.h>
+
 class ScopedRosoutSink {
  public:
   ScopedRosoutSink(std::shared_ptr<Logger> logger,
@@ -49,19 +51,37 @@ class ScopedPrintSink {
   ScopedPrintSink(std::shared_ptr<Logger> logger) : logger_(logger) {
     logger_->register_sink(
         Sink("print", Log_Levels::INFO, [](LogMessage message) {
+          auto now = message.timestamp.time_since_epoch();
+          auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now);
+          now -= seconds;
+          auto nano_seconds =
+              std::chrono::duration_cast<std::chrono::nanoseconds>(now);
+
+          auto secs = seconds.count();
+          auto nsecs = nano_seconds.count();
+
+          auto level = level_to_string(message.level);
+          auto file = message.file;
+          auto function = message.function;
+          auto line = message.line;
+          auto data = message.log_string;
+
+          auto log_string = fmt::format("{level:<5}: [{secs}.{nsecs:0<9}] {data}",
+              FMT_CAPTURE(level, secs, nsecs, data, file, function, line));
+
           switch (message.level) {
             case Log_Levels::FATAL:
             case Log_Levels::ERROR:
-              printf("\x1b[31m%s\x1b[0m\n", message.log_string);
+              printf("\x1b[31m%s\x1b[0m\n", log_string.c_str());
               break;
             case Log_Levels::WARN:
-              printf("\x1b[33m%s\x1b[0m\n", message.log_string);
+              printf("\x1b[33m%s\x1b[0m\n", log_string.c_str());
               break;
             case Log_Levels::DEBUG:
-              printf("\x1b[32m%s\x1b[0m\n", message.log_string);
+              printf("\x1b[32m%s\x1b[0m\n", log_string.c_str());
               break;
             case Log_Levels::INFO:
-              printf("%s\n", message.log_string);
+              printf("%s\n", log_string.c_str());
               break;
           }
         }));
@@ -71,6 +91,26 @@ class ScopedPrintSink {
 
  private:
   std::shared_ptr<Logger> logger_;
+
+  static const char* level_to_string(Log_Levels level) {
+    switch (level) {
+      case Log_Levels::FATAL:
+        return "FATAL";
+        break;
+      case Log_Levels::ERROR:
+        return "ERROR";
+        break;
+      case Log_Levels::WARN:
+        return "WARN";
+        break;
+      case Log_Levels::DEBUG:
+        return "DEBUG";
+        break;
+      case Log_Levels::INFO:
+        return "INFO";
+        break;
+    }
+  }
 };
 
 #endif
