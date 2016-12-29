@@ -45,7 +45,7 @@ struct LogMessage {
   LogMessage(Log_Levels _level,
              std::chrono::time_point<std::chrono::system_clock> _timestamp,
              const char* _file, const char* _function, int _line,
-             std::string _log_string)
+             const char* _log_string)
       : level(_level),
         timestamp(_timestamp),
         file(_file),
@@ -63,7 +63,7 @@ struct LogMessage {
   int line = 0;
 
   // The actual string that we want to log
-  std::string log_string;
+  const char* log_string;
 };
 
 class Logger {

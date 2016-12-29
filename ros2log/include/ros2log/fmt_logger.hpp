@@ -13,7 +13,7 @@ class FmtLogger : public Logger {
            const char *fmt, Args &&... args) const {
     auto data = fmt::format(fmt, std::forward<Args>(args)...);
     auto message = LogMessage(level, std::chrono::system_clock::now(), file,
-                              function, line, data);
+                              function, line, data.c_str());
     output(message);
   }
 };
