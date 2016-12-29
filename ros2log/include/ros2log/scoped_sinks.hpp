@@ -29,6 +29,7 @@ class ScopedRosoutSink {
           msg.header.stamp.sec = secs;
           msg.header.stamp.nanosec = nsecs;
           msg.level = static_cast<uint8_t>(message.level);
+          msg.name = message.logger_name;
           msg.file = message.file;
           msg.function = message.function;
           msg.line = message.line;
