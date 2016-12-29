@@ -99,6 +99,10 @@ class Logger {
     return sinks;
   }
 
+  virtual void set_name(const std::string& _name) {
+    name = _name;
+  }
+
   virtual std::string get_name() {
     return name;
   }

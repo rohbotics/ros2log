@@ -10,6 +10,7 @@ namespace rclcpp {
 
 void init_logger(std::shared_ptr<Logger> logger,
                  std::shared_ptr<rclcpp::node::Node> node) {
+  logger->set_name(node->get_name());
   node->register_param_change_callback(
       [=](const std::vector<rclcpp::parameter::ParameterVariant>& parameters) {
         rcl_interfaces::msg::SetParametersResult result;
