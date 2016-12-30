@@ -68,8 +68,10 @@ class ScopedPrintSink {
           auto line = message.line;
           auto data = message.log_string;
 
-          auto log_string = fmt::format("{level:<5}: [{secs}.{nsecs:0<9}] {data}",
-              FMT_CAPTURE(level, secs, nsecs, data, file, function, line, logger_name));
+          auto log_string =
+              fmt::format("{level:<5}: [{secs}.{nsecs:0<9}] {data}",
+                          FMT_CAPTURE(level, secs, nsecs, data, file, function,
+                                      line, logger_name));
 
           switch (message.level) {
             case Log_Levels::FATAL:

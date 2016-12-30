@@ -56,7 +56,7 @@ struct LogMessage {
   LogMessage() = default;
 
   // Metadata about the log message
-  const char* logger_name = nullptr;  
+  const char* logger_name = nullptr;
   Log_Levels level;
   std::chrono::time_point<std::chrono::system_clock> timestamp;
   const char* file = nullptr;
@@ -72,10 +72,10 @@ class Logger {
   Logger(const std::string& logger_name = "",
          std::shared_ptr<Logger> logger_parent = nullptr)
       : name(logger_name), parent(logger_parent) {
-        if (parent != nullptr) {
-          parent->register_child(this);
-        }
-      };
+    if (parent != nullptr) {
+      parent->register_child(this);
+    }
+  };
 
   ~Logger() {
     if (parent != nullptr) {
@@ -108,26 +108,20 @@ class Logger {
     return sinks;
   }
 
-  virtual std::vector<Logger*>& get_children() {
-    return children;
-  }
+  virtual std::vector<Logger*>& get_children() { return children; }
 
+  virtual void set_name(const std::string& _name) { name = _name; }
 
-  virtual void set_name(const std::string& _name) {
-    name = _name;
-  }
+  virtual std::string get_name() { return name; }
 
-  virtual std::string get_name() {
-    return name;
-  }
+  bool enabled = true;  // Is this logger enabled
+  Log_Levels logger_level =
+      Log_Levels::DEBUG;  // What level should this logger sink at
 
-  bool enabled = true; // Is this logger enabled
-  Log_Levels logger_level = Log_Levels::DEBUG; // What level should this logger sink at
-  
  protected:
   std::vector<Sink> sinks;
 
-  std::string name; // The name of this logger (optional)
+  std::string name;  // The name of this logger (optional)
 
   std::shared_ptr<Logger> parent;
   int logger_id = -1;
@@ -153,9 +147,9 @@ class Logger {
   }
 
   virtual void deregister_child(int child_id) {
-    children.erase(std::remove_if(children.begin(), children.end(), [child_id](Logger* child) {
-      return child->logger_id == child_id;
-    }));
+    children.erase(std::remove_if(
+        children.begin(), children.end(),
+        [child_id](Logger* child) { return child->logger_id == child_id; }));
   }
 };
 

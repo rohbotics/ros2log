@@ -14,11 +14,11 @@ static Logger* find_logger(const std::string& logger_name, Logger* logger) {
   for (auto child : logger->get_children()) {
     if (child->get_name().c_str() == top_logger) {
       if (slash == std::string::npos) {
-        return child; // There was no slash, so that was the end
+        return child;  // There was no slash, so that was the end
       }
       return find_logger(logger_name.substr(slash + 1), child);
-    }
-    else return nullptr;
+    } else
+      return nullptr;
   }
   return nullptr;
 }
@@ -80,29 +80,29 @@ void init_logger(std::shared_ptr<Logger> logger,
           // Special case for root logger
           if ("logging/level" == param.get_name()) {
             if (param.get_type() ==
-              rclcpp::parameter::ParameterType::PARAMETER_STRING) {
-                std::string level_str = param.get_value<std::string>();
-                if (level_str == "DEBUG")
-                  logger->logger_level = Log_Levels::DEBUG;
+                rclcpp::parameter::ParameterType::PARAMETER_STRING) {
+              std::string level_str = param.get_value<std::string>();
+              if (level_str == "DEBUG")
+                logger->logger_level = Log_Levels::DEBUG;
 
-                else if (level_str == "INFO")
-                  logger->logger_level = Log_Levels::INFO;
+              else if (level_str == "INFO")
+                logger->logger_level = Log_Levels::INFO;
 
-                else if (level_str == "WARN")
-                  logger->logger_level = Log_Levels::WARN;
+              else if (level_str == "WARN")
+                logger->logger_level = Log_Levels::WARN;
 
-                else if (level_str == "ERROR")
-                  logger->logger_level = Log_Levels::ERROR;
+              else if (level_str == "ERROR")
+                logger->logger_level = Log_Levels::ERROR;
 
-                else if (level_str == "FATAL")
-                  logger->logger_level = Log_Levels::FATAL;
+              else if (level_str == "FATAL")
+                logger->logger_level = Log_Levels::FATAL;
 
-                else {
-                  result.successful = false;
-                  result.reason =
-                      "level must be one of: DEBUG, INFO, WARN, ERROR, "
-                      "FATAL";
-                }
+              else {
+                result.successful = false;
+                result.reason =
+                    "level must be one of: DEBUG, INFO, WARN, ERROR, "
+                    "FATAL";
+              }
             }
           }
 
@@ -121,35 +121,37 @@ void init_logger(std::shared_ptr<Logger> logger,
           // Deal with parameters for the subloggers
           if (param.get_name().find("logging/loggers/") != std::string::npos) {
             auto param_name = param.get_name();
-            auto logger_name = param_name.substr(16, param_name.rfind('/') - 16); // from logging/loggers/ (16 chars) to the last /
+            auto logger_name = param_name.substr(
+                16, param_name.rfind('/') -
+                        16);  // from logging/loggers/ (16 chars) to the last /
             auto child_logger = find_logger(logger_name, logger.get());
             if (child_logger != nullptr) {
-              auto parameter = param_name.substr(param_name.rfind('/')+1);
+              auto parameter = param_name.substr(param_name.rfind('/') + 1);
               if (parameter == "level") {
                 if (param.get_type() ==
-                  rclcpp::parameter::ParameterType::PARAMETER_STRING) {
-                    std::string level_str = param.get_value<std::string>();
-                    if (level_str == "DEBUG")
-                      child_logger->logger_level = Log_Levels::DEBUG;
+                    rclcpp::parameter::ParameterType::PARAMETER_STRING) {
+                  std::string level_str = param.get_value<std::string>();
+                  if (level_str == "DEBUG")
+                    child_logger->logger_level = Log_Levels::DEBUG;
 
-                    else if (level_str == "INFO")
-                      child_logger->logger_level = Log_Levels::INFO;
+                  else if (level_str == "INFO")
+                    child_logger->logger_level = Log_Levels::INFO;
 
-                    else if (level_str == "WARN")
-                      child_logger->logger_level = Log_Levels::WARN;
+                  else if (level_str == "WARN")
+                    child_logger->logger_level = Log_Levels::WARN;
 
-                    else if (level_str == "ERROR")
-                      child_logger->logger_level = Log_Levels::ERROR;
+                  else if (level_str == "ERROR")
+                    child_logger->logger_level = Log_Levels::ERROR;
 
-                    else if (level_str == "FATAL")
-                      child_logger->logger_level = Log_Levels::FATAL;
+                  else if (level_str == "FATAL")
+                    child_logger->logger_level = Log_Levels::FATAL;
 
-                    else {
-                      result.successful = false;
-                      result.reason =
-                          "level must be one of: DEBUG, INFO, WARN, ERROR, "
-                          "FATAL";
-                    }
+                  else {
+                    result.successful = false;
+                    result.reason =
+                        "level must be one of: DEBUG, INFO, WARN, ERROR, "
+                        "FATAL";
+                  }
                 }
               }
               if (parameter == "enabled") {
