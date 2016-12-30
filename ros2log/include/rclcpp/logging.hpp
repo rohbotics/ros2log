@@ -8,6 +8,8 @@
 
 namespace rclcpp {
 
+// find a logger by it's path relative to root
+// It is safe to take raw pointer as this function has no ownership
 static Logger* find_logger(const std::string& logger_name, Logger* logger) {
   auto slash = logger_name.find('/');
   auto top_logger = logger_name.substr(0, slash);
@@ -16,13 +18,14 @@ static Logger* find_logger(const std::string& logger_name, Logger* logger) {
       if (slash == std::string::npos) {
         return child;  // There was no slash, so that was the end
       }
-      return find_logger(logger_name.substr(slash + 1), child);
+      return find_logger(logger_name.substr(slash + 1), child);  // Recurse!
     } else
       return nullptr;
   }
   return nullptr;
 }
 
+// Pass the root logger to this function to initialize it with rclcpp
 void init_logger(std::shared_ptr<Logger> logger,
                  std::shared_ptr<rclcpp::node::Node> node) {
   logger->set_name(node->get_name());

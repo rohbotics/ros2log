@@ -124,10 +124,12 @@ class Logger {
   std::string name;  // The name of this logger (optional)
 
   std::shared_ptr<Logger> parent;
+  // This id is only unique between siblings, and not in the whole tree
   int logger_id = -1;
   std::vector<Logger*> children;
 
   virtual void output(LogMessage& message) const {
+    // Check if we need to do anything first
     if (enabled && message.level >= logger_level) {
       if (parent) {
         parent->output(message);

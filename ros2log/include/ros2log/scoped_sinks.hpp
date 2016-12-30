@@ -8,6 +8,7 @@
 
 #include <fmt/format.h>
 
+// Sink that publishes to rosout, and is attached as long as it is in scope
 class ScopedRosoutSink {
  public:
   ScopedRosoutSink(std::shared_ptr<Logger> logger,
@@ -29,7 +30,7 @@ class ScopedRosoutSink {
           msg.header.stamp.sec = secs;
           msg.header.stamp.nanosec = nsecs;
           msg.level = static_cast<uint8_t>(message.level);
-          msg.name = message.logger_name;
+          msg.name = message.logger_name;  // TODO(rohbotics) use the path here
           msg.file = message.file;
           msg.function = message.function;
           msg.line = message.line;
@@ -47,6 +48,7 @@ class ScopedRosoutSink {
   rclcpp::Publisher<rosgraph_msgs::msg::Log>::SharedPtr rosout_pub;
 };
 
+// Sink that prints in color, and is attached as long as it is in scope
 class ScopedPrintSink {
  public:
   ScopedPrintSink(std::shared_ptr<Logger> logger) : logger_(logger) {
