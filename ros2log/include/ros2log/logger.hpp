@@ -121,22 +121,28 @@ class Logger {
     return name;
   }
 
+  bool enabled = true; // Is this logger enabled
+  Log_Levels logger_level = Log_Levels::DEBUG; // What level should this logger sink at
+  
  protected:
   std::vector<Sink> sinks;
-  std::string name;
+
+  std::string name; // The name of this logger (optional)
 
   std::shared_ptr<Logger> parent;
   int logger_id = -1;
   std::vector<Logger*> children;
 
   virtual void output(LogMessage& message) const {
-    if (parent) {
-      parent->output(message);
-      return;
-    }
-    for (auto& sink : sinks) {
-      if (sink.enabled && message.level >= sink.output_level) {
-        sink.output_function(message);
+    if (enabled && message.level >= logger_level) {
+      if (parent) {
+        parent->output(message);
+        return;
+      }
+      for (auto& sink : sinks) {
+        if (sink.enabled && message.level >= sink.output_level) {
+          sink.output_function(message);
+        }
       }
     }
   }
