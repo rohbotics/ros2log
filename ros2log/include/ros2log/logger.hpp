@@ -71,8 +71,17 @@ class Logger {
  public:
   Logger(const std::string& logger_name = "",
          std::shared_ptr<Logger> logger_parent = nullptr)
-      : name(logger_name), parent(logger_parent){};
-  ~Logger() = default;
+      : name(logger_name), parent(logger_parent) {
+        if (parent != nullptr) {
+          parent->register_child(this);
+        }
+      };
+
+  ~Logger() {
+    if (parent != nullptr) {
+      parent->deregister_child(logger_id);
+    }
+  };
 
   virtual void register_sink(const Sink& sink) {
     if (parent != nullptr) {
@@ -99,6 +108,11 @@ class Logger {
     return sinks;
   }
 
+  virtual std::vector<Logger*>& get_children() {
+    return children;
+  }
+
+
   virtual void set_name(const std::string& _name) {
     name = _name;
   }
@@ -112,6 +126,8 @@ class Logger {
   std::string name;
 
   std::shared_ptr<Logger> parent;
+  int logger_id = -1;
+  std::vector<Logger*> children;
 
   virtual void output(LogMessage& message) const {
     if (parent) {
@@ -123,6 +139,17 @@ class Logger {
         sink.output_function(message);
       }
     }
+  }
+
+  virtual void register_child(Logger* child) {
+    child->logger_id = children.size();
+    children.push_back(child);
+  }
+
+  virtual void deregister_child(int child_id) {
+    children.erase(std::remove_if(children.begin(), children.end(), [child_id](Logger* child) {
+      return child->logger_id == child_id;
+    }));
   }
 };
 
