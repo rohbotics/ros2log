@@ -164,6 +164,9 @@ void init_logger(std::shared_ptr<Logger> logger,
                   result.reason = "enabled must be a boolean";
                 }
               }
+            } else {
+              result.successful = false;
+              result.reason = "Could not find logger" + logger_name;
             }
           }
         }
