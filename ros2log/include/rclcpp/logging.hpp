@@ -16,7 +16,7 @@ void init_logger(std::shared_ptr<Logger> logger,
         rcl_interfaces::msg::SetParametersResult result;
         result.successful = true;
 
-        for (auto param : parameters) {
+        for (const auto& param : parameters) {
           for (auto& sink : logger->get_sinks()) {
             if ("logging/sinks/" + sink.name + "/level" == param.get_name()) {
               if (param.get_type() ==
@@ -41,12 +41,12 @@ void init_logger(std::shared_ptr<Logger> logger,
                 else {
                   result.successful = false;
                   result.reason =
-                      "log_level must be one of: DEBUG, INFO, WARN, ERROR, "
+                      "level must be one of: DEBUG, INFO, WARN, ERROR, "
                       "FATAL";
                 }
               } else {
                 result.successful = false;
-                result.reason = "log_level must be a string";
+                result.reason = "level must be a string";
               }
             }
 
@@ -57,8 +57,49 @@ void init_logger(std::shared_ptr<Logger> logger,
 
               } else {
                 result.successful = false;
-                result.reason = "log_level must be a boolean";
+                result.reason = "enabled must be a boolean";
               }
+            }
+          }
+
+          // Special case for root logger
+          if ("logging/level" == param.get_name()) {
+            if (param.get_type() ==
+              rclcpp::parameter::ParameterType::PARAMETER_STRING) {
+                std::string level_str = param.get_value<std::string>();
+                if (level_str == "DEBUG")
+                  logger->logger_level = Log_Levels::DEBUG;
+
+                else if (level_str == "INFO")
+                  logger->logger_level = Log_Levels::INFO;
+
+                else if (level_str == "WARN")
+                  logger->logger_level = Log_Levels::WARN;
+
+                else if (level_str == "ERROR")
+                  logger->logger_level = Log_Levels::ERROR;
+
+                else if (level_str == "FATAL")
+                  logger->logger_level = Log_Levels::FATAL;
+
+                else {
+                  result.successful = false;
+                  result.reason =
+                      "level must be one of: DEBUG, INFO, WARN, ERROR, "
+                      "FATAL";
+                }
+            }
+          }
+
+          // Special case for root logger
+          if ("logging/enabled" == param.get_name()) {
+            if (param.get_type() ==
+                rclcpp::parameter::ParameterType::PARAMETER_BOOL) {
+              logger->enabled = param.get_value<bool>();
+
+            } else {
+              result.successful = false;
+              result.reason = "enabled must be a boolean";
             }
           }
         }
