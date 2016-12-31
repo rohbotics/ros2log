@@ -38,6 +38,8 @@
   _logger->log(Log_Levels::FATAL, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
+// These are the same levels as the Log message
+// Do they really need to be binary flag able? Can you have multiple levels?
 enum class Log_Levels { DEBUG = 1, INFO = 2, WARN = 4, ERROR = 8, FATAL = 16 };
 
 struct LogMessage {
@@ -123,6 +125,7 @@ class Logger {
 
   std::string name;  // The name of this logger (optional)
 
+  // Children share ownership of parent
   std::shared_ptr<Logger> parent;
   // This id is only unique between siblings, and not in the whole tree
   int logger_id = -1;
